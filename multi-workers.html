@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Web Worker Study-開啟多個Workers</title>
+</head>
+
+<body>
+  <p>
+    <input type="file" name="file" id="file" multiple>
+  </p>
+  <p id="result"></p>
+</body>
+
+</html>
+<script>
+
+  //利用迴圈開啟多個workers 去執行讀檔的動作
+  let result = document.querySelector("#result")
+  let file = document.querySelector("#file");
+
+  file.addEventListener("change", function () {
+    let start=Date.now();
+    let files = document.querySelector("#file").files
+    for (let i = 0; i < files.length; i++) {
+      let w = new Worker("./js/readfile.js");
+      w.postMessage(files[i]);
+      w.onmessage = function (e) {
+        let audio = document.createElement("audio")
+        audio.setAttribute("src", URL.createObjectURL(e.data))
+        audio.setAttribute("controls", "")
+        result.appendChild(audio);
+        if(i>=files.length-1){
+          w.terminate();
+          let end=Date.now()
+          console.log(end-start)
+        }
+      }
+    }
+  })
+</script>

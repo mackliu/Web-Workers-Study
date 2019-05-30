@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Web Worker Study-利用workers 去開啟sub workers</title>
+</head>
+
+<body>
+  <p>
+    <input type="file" name="file" id="file" multiple>
+  </p>
+  <p id="result"></p>
+</body>
+
+</html>
+<script>
+  //讓一個worker去負責開sub workers的工作，主執行緒等收到全部回應後再執行DOM的寫入
+  let result = document.querySelector("#result")
+  let file = document.querySelector("#file");
+  file.addEventListener("change", function () {
+    let start=Date.now()
+    let files = document.querySelector("#file").files
+    let w = new Worker("./js/readfile2.js");
+    w.postMessage(files);
+    w.onmessage = function (e) {
+      for (let i = 0; i < e.data.length; i++) {
+        let audio = document.createElement("audio")
+        audio.setAttribute("src", URL.createObjectURL(e.data[i]))
+        audio.setAttribute("controls", "")
+        audio.setAttribute("volume","0.1")
+        result.appendChild(audio);
+      }
+      w.terminate();
+      let end=Date.now();
+      console.log(end-start)
+    }
+  })
+</script>

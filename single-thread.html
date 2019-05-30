@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Web Worker Study - 在js中直接執行</title>
+</head>
+
+<body>
+  <p>
+    <input type="file" name="file" id="file" multiple>
+  </p>
+<p id="result"></p>
+</body>
+
+</html>
+<script>
+
+  let result = document.querySelector("#result")
+  let file=document.querySelector("#file");
+  file.addEventListener("change",function(){
+    let start=Date.now();
+    let end=0;
+    let files=document.querySelector("#file").files
+        for(let i=0;i<files.length;i++){
+            let fileReader=new FileReader();
+                fileReader.onload=function(e){
+                  let blob=new Blob([new DataView(e.target.result)],{type:"audio/mpeg"})
+                  let audio=document.createElement("audio") 
+                      audio.setAttribute("src",URL.createObjectURL(blob))
+                      audio.setAttribute("controls","")
+                      result.appendChild(audio);
+                  if(i>=files.length-1){
+                    end=Date.now();
+                    console.log(end-start)
+                  }
+           }
+            fileReader.readAsArrayBuffer(files[i]);
+        }
+      })
+        
+    
+</script>

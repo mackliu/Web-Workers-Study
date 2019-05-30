@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Web Worker Study</title>
+</head>
+
+<body>
+  <p>
+    <label for="n1">數字一</label>
+    <input type="text" name="n1" id="n1">
+  </p>
+
+  <p>
+    <label for="n2">數字二</label>
+    <input type="text" name="n2" id="n2">
+  </p>
+  <button>計算</button>
+
+  <p id="ans">答案：</p>
+</body>
+
+</html>
+<script>
+  //官方範例，用web workers 來做兩數相乘
+  let button = document.querySelector("button")
+  let w=new Worker("./js/multiply.js")
+
+  button.addEventListener("click", function () {
+    let n1 = document.querySelector("#n1").value
+    let n2 = document.querySelector("#n2").value
+    w.postMessage([n1,n2])
+    w.onmessage=function(e){
+      document.querySelector("#ans").innerHTML="答案："+e.data
+    }
+  })
+</script>
